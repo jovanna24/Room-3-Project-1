@@ -10,4 +10,16 @@ function readSearchesFromStorage() {
     return organizations;
 }
 
-
+fetch ('https://projects.propublica.org/nonprofits/api/v2', {
+    method: 'GET', 
+    headers: {
+        'Content-type': 'application/json'
+    }, 
+    body: JSON.stringify({
+        name: 'Organization 1'
+    })
+}).then(res => {
+    return res.json()
+})
+.then(data => console.log(data)) 
+.catch(error => console.log('ERROR'))
