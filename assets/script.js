@@ -7,14 +7,6 @@ const locationInput = document.getElementById('location');
 let map, marker;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the Leaflet map on page load
-    map = L.map('map').setView([40.7128, -74.0060], 13);  // Default location (New York)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    marker = L.marker([40.7128, -74.0060]).addTo(map);
-
     // Event listeners
     openModalButton.addEventListener('click', openModal);
     closeButton.addEventListener('click', closeModal);
@@ -31,26 +23,32 @@ function closeModal() {
 
 function handleFormSubmit(event) {
     event.preventDefault();
-    const selectedOptions = Array.from(userInterestsForm.querySelector('select').selectedOptions).map(option => option.value);
     const location = locationInput.value;
-    console.log('Selected Categories:', selectedOptions);
-    console.log('Location:', location);
-    updateMapLocation(location);
-    closeModal();
+    updateMapLocation(location); // This function will handle showing the map
+    closeModal(); // Close modal after submission
 }
 
 function updateMapLocation(zip) {
     fetch(`https://api.radar.io/v1/geocode/forward?query=${zip}`, {
         headers: {
-            'Authorization': 'prj_live_pk_e64bd1419252c5a7a6a4621aa58ae2e6db9a297e'
+            'Authorization': 'prj_live_pk_e64bd1419252c5a7a6a4621aa58ae2e6db9a297e' // Use your publishable key here
         }
     })
     .then(response => response.json())
     .then(data => {
         if (data.addresses && data.addresses.length > 0) {
             const coords = [data.addresses[0].latitude, data.addresses[0].longitude];
-            map.setView(coords, 13);
-            marker.setLatLng(coords);
+            if (!map) {
+                initMap(coords); // Initialize map if not already initialized
+            } else {
+                map.setView(coords, 13); // Set map view to new coordinates
+            }
+            if (marker) {
+                marker.setLatLng(coords); // Update marker position
+            } else {
+                marker = L.marker(coords).addTo(map); // Add new marker
+            }
+            document.getElementById('map').style.display = 'block'; // Show the map
         } else {
             alert('No results found.');
         }
@@ -59,4 +57,13 @@ function updateMapLocation(zip) {
         console.error('Error:', error);
         alert('Failed to retrieve location data');
     });
+}
+
+function initMap(coords) {
+    map = L.map('map').setView(coords, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    marker = L.marker(coords).addTo(map);
 }

@@ -11,9 +11,9 @@
     <link href="https://js.radar.com/v4.1.18/radar.css" rel="stylesheet">
     <!-- Our Stylesheet -->
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 
 <body>
@@ -64,12 +64,17 @@
             <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
         </div>
     </div>
+
     <!-- For Location Display -->
-    <div id="map" style="width: 80%; height: 100%; position:absolute; left: 325px;">Display Location:</div>
+    <div id="map-container">
+        <div id="map" class="map">Display Location:</div>
+    </div>
 
     <!-- Our Javascript -->
     <script src="assets/script.js"></script>
 
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 
 </html>
