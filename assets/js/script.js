@@ -46,7 +46,11 @@ function displayOrganization(organization) {
         const resultBody = document.createElement('div'); 
         resultCard.append(resultBody); 
 
-        //Need to add display parameters
+        const bodyContentEl = document.createElement('p');
+        bodyContentEl.innerHTML +=
+        `<strong>Organization Name: </strong> ${organization.sub_name}<br/>` +
+        `<strong>Organization Address: </strong> ${organization.address}<br/>` +
+        `<strong>Organization City: </strong> ${organization.city}<br/>` +
 
         resultContentEl.append(resultCard);
 
