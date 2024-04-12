@@ -10,7 +10,7 @@
     <!-- Map Stylesheet -->
     <link href="https://js.radar.com/v4.1.18/radar.css" rel="stylesheet">
     <!-- Our Stylesheet -->
-    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body>
@@ -56,13 +56,27 @@
                     </select>
                 </div>
                 <input class="input is-focused my-3" type="text" id="location" placeholder="Input your Zip Code!" />
-                <button class="button is-info is-outlined" type="submit">Submit Search</button>
+                <button class="button is-info is-outlined" id="submit" type="submit">Submit Search</button>
             </form>
             <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
         </div>
     </div>
-    <!-- For Location Display -->
-    <div id="map" style="width: 80%; height: 100%; position:absolute; left: 325px;">Display Location:</div>
+
+    <div class="columns is-size-5">
+        <div class="column col-1 mx-5">
+            <div class="cell">List Here</div>
+            <div class="cell">Result</div>
+            <div class="cell">Result</div>
+            <div class="cell">Result</div>
+            <div class="cell">Result</div>
+            <div class="cell">Result</div>
+        </div>
+        <div class="column col-2">
+            <!-- For Location Display -->
+            <div id="map" style="width: 80%; height: 100%; position:absolute; left: 325px;">Display Location:</div>
+        </div>
+    </div>
+
 
     <!-- Our Javascript -->
     <script src="assets/script.js"></script>
