@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Git Connected!</title>
+    <!-- Bulma Stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <!-- Map Stylesheet -->
+    <link href="https://js.radar.com/v4.1.18/radar.css" rel="stylesheet">
+    <!-- Our Stylesheet -->
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+
+    <!-- Instructions banner -->
+    <div class="fixed-grid has-4-cols">
+        <div class="grid">
+            <div class="cell is-col-span-3 has-text-weight-semibold is-size-2 has-text-link my-5 ml-5">
+                Git
+                Connected!</div>
+            <div class="cell has-text-centered m-3">
+                <button id="open-modal" class="button is-large is-primary is-outlined m-3"
+                    data-target="userInterestsForm">Open
+                    Form</button>
+            </div>
+            <div class="cell is-col-span-4 ml-5">This site is designed to
+                connect people to
+                local nonprofits they can support in their
+                communities based on areas of interest. <strong> Click on </strong>the
+                <code>Open Form</code> button to get started!
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal(PopUp) Form -->
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content my-1">
+            <form id="userInterestsForm" class="has-background-primary-dark has-text-primary-dark-invert">
+                <div class="select is-multiple mx-1">
+                    <label>Select Category:</label>
+                    <select multiple size="10">
+                        <option value="1">Arts, Culture & Humanities</option>
+                        <option value="2">Education</option>
+                        <option value="3">Environment & Animals</option>
+                        <option value="4">Health</option>
+                        <option value="5">Human Services</option>
+                        <option value="6">International, Foreign Affairs</option>
+                        <option value="7">Public, Societal Benefit</option>
+                        <option value="8">Religion Related</option>
+                        <option value="9">Mutual/Memebership Benefit</option>
+                        <option value="10">Unclassified/Unknown</option>
+                    </select>
+                </div>
+                <input class="input is-focused my-3" type="text" id="location" placeholder="Input your Zip Code!" />
+                <button class="button is-info is-outlined" type="submit">Submit Search</button>
+            </form>
+            <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
+        </div>
+    </div>
+    <!-- For Location Display -->
+    <div id="map" style="width: 80%; height: 100%; position:absolute; left: 325px;">Display Location:</div>
+
+    <!-- Our Javascript -->
+    <script src="assets/script.js"></script>
+
+</body>
+
+</html>
