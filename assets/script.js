@@ -27,6 +27,9 @@ function handleFormSubmit(event) {
         category: selection,
         location: zipCode.trim(),
     }
+
+    console.log(searchThis);
+
     setSearchInLocalStorage(searchThis);
 }
 
