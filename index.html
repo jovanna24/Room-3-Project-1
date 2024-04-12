@@ -1,19 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
-  <link rel="stylesheet" href="./assets/css/style.css" />
-  <title>RM3 Project</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Git Connected!</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <!-- For Bulma Imports -->
+    <link rel="stylesheet" href="style.scss">
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-    <h1>Git Connected!</h1> 
-    
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="./assets/js/script.js"></script>
+<button id="open-modal" class="button is-large is-primary is-outlined" data-target="userInterestsForm">Open
+    Form</button>
+
+<div class="modal" id="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content my-1">
+        <form id="userInterestsForm">
+            <div class="select is-multiple mx-1">
+                <label>Select Category:</label>
+                <select multiple size="10">
+                    <option value="1">Arts, Culture & Humanities</option>
+                    <option value="2">Education</option>
+                    <option value="3">Environment & Animals</option>
+                    <option value="4">Health</option>
+                    <option value="5">Human Services</option>
+                    <option value="6">International, Foreign Affairs</option>
+                    <option value="7">Public, Societal Benefit</option>
+                    <option value="8">Religion Related</option>
+                    <option value="9">Mutual/Memebership Benefit</option>
+                    <option value="10">Unclassified/Unknown</option>
+                </select>
+            </div>
+            <input class="input is-focused my-2" type="text" id="location" placeholder="Input your Zip Code!" />
+            <button class="button is-info is-outlined" type="submit">Submit Search</button>
+        </form>
+        <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
+    </div>
+</div>
+
 </body>
+
+<script src="wip.js"></script>
+
 </html>
