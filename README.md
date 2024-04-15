@@ -1,7 +1,7 @@
 # Room-3-Project-1
 Project Title: Git Connected with Nonprofits in your Community!
 Description: A user-friendly application to locate nearby volunteer organizations
-User Story: As a community member, I want to get connected with local nonprofit organizations that I can volunteer my time towards projects and purposes that I’m passionate about.  
+User Story: As a community member, I want to get connected with local nonprofit organizations so that I contribute togit projects and purposes that I’m passionate about.  
 
 USER FLOW/CHECKLIST TO COMPLETION
 
@@ -34,4 +34,4 @@ APIs USED
 1: https://projects.propublica.org/nonprofits/api
 2: 
 
-SCREENSHOT & LINK TO DEPLOYED APPLIXATION
+SCREENSHOT & LINK TO DEPLOYED APPLICATION
