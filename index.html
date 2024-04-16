@@ -43,19 +43,20 @@
                 <div class="select is-multiple mx-1">
                     <label>Select Category:</label>
                     <select multiple size="10">
-                        <option value="1">Arts, Culture & Humanities</option>
-                        <option value="2">Education</option>
-                        <option value="3">Environment & Animals</option>
-                        <option value="4">Health</option>
-                        <option value="5">Human Services</option>
-                        <option value="6">International, Foreign Affairs</option>
-                        <option value="7">Public, Societal Benefit</option>
-                        <option value="8">Religion Related</option>
-                        <option value="9">Mutual/Memebership Benefit</option>
-                        <option value="10">Unclassified/Unknown</option>
+                        <option value="1" name="Arts, Culture & Humanities">Arts, Culture & Humanities</option>
+                        <option value="2" name="Education">Education</option>
+                        <option value="3" name="Environment & Animals">Environment & Animals</option>
+                        <option value="4" name="Health">Health</option>
+                        <option value="5" name="Human Services">Human Services</option>
+                        <option value="6" name="International, Foreign Affairs">International, Foreign Affairs</option>
+                        <option value="7" name="Public, Societal Benefit">Public, Societal Benefit</option>
+                        <option value="8" name="Religious">Religion Related</option>
+                        <option value="9" name="Membership Benefit">Mutual/Membership Benefit</option>
+                        <option value="10" name="Other">Unclassified/Unknown</option>
                     </select>
                 </div>
-                <input class="input is-focused my-3" type="text" id="location" placeholder="Input your Zip Code!" />
+                <input class="input is-focused my-3" type="text" id="postalCodeInput"
+                    placeholder="Input your Zip Code!" />
                 <button class="button is-primary is-outlined" id="submit" type="submit">Submit Search</button>
             </form>
             <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
@@ -64,12 +65,9 @@
 
     <div class="columns is-size-5">
         <div class="column col-1 mx-5 p-3">
-            <div class="cell">List Here</div>
-            <div class="cell">Result</div>
-            <div class="cell">Result</div>
-            <div class="cell">Result</div>
-            <div class="cell">Result</div>
-            <div class="cell">Result</div>
+            <div class="column col-1 mx-5 p-3">
+                <div class="cell" id="results">List Here</div>
+            </div>
         </div>
         <div class="column col-2">
             <!-- For Location Display -->
@@ -81,10 +79,10 @@
     </div>
 
 
+    <!-- Include the Radar SDK script -->
+    <script src="https://js.radar.com/v4.1.18/radar.js"></script>
     <!-- Our Javascript -->
     <script src="assets/script.js"></script>
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 </body>
 
