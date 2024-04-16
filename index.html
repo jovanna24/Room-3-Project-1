@@ -5,43 +5,93 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Git Connected!</title>
+    <!-- Bulma Stylesheet -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
-    <!-- For Bulma Imports -->
-    <link rel="stylesheet" href="style.scss">
-    <link rel="stylesheet" href="styles.css">
+    <!-- Map Stylesheet -->
+    <link href="https://js.radar.com/v4.1.18/radar.css" rel="stylesheet">
+    <!-- Our Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<button id="open-modal" class="button is-large is-primary is-outlined" data-target="userInterestsForm">Open
-    Form</button>
+<body>
 
-<div class="modal" id="modal">
-    <div class="modal-background"></div>
-    <div class="modal-content my-1">
-        <form id="userInterestsForm">
-            <div class="select is-multiple mx-1">
-                <label>Select Category:</label>
-                <select multiple size="10">
-                    <option value="1">Arts, Culture & Humanities</option>
-                    <option value="2">Education</option>
-                    <option value="3">Environment & Animals</option>
-                    <option value="4">Health</option>
-                    <option value="5">Human Services</option>
-                    <option value="6">International, Foreign Affairs</option>
-                    <option value="7">Public, Societal Benefit</option>
-                    <option value="8">Religion Related</option>
-                    <option value="9">Mutual/Memebership Benefit</option>
-                    <option value="10">Unclassified/Unknown</option>
-                </select>
+    <!-- Instructions banner -->
+    <div class="fixed-grid has-4-cols">
+        <div class="grid">
+            <div class="cell is-col-span-3 has-text-weight-semibold is-size-2 has-text-primary my-5 ml-5">
+                Git
+                Connected!</div>
+            <div class="cell has-text-centered m-3">
+                <button id="open-modal" class="button is-large is-primary is-outlined m-3"
+                    data-target="userInterestsForm">Open
+                    Form</button>
             </div>
-            <input class="input is-focused my-2" type="text" id="location" placeholder="Input your Zip Code!" />
-            <button class="button is-info is-outlined" type="submit">Submit Search</button>
-        </form>
-        <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
+            <div class="cell is-col-span-4 ml-5">This site is designed to
+                show users the location of nearby breweries, provide information about them, and provide driving directions.   <strong> Click on </strong>the
+                <code>Open Form</code> button to get started!
+            </div>
+        </div>
     </div>
-</div>
+
+    <!-- Modal(PopUp) Form -->
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content my-1">
+            <form id="userInterestsForm" class="has-background-info-dark has-text-info-dark-invert">
+                <!-- <div class="select is-multiple mx-1">
+                    <label>Select Category:</label>
+                    <select multiple size="10">
+                        <option value="1" name="Arts, Culture & Humanities">Arts, Culture & Humanities</option>
+                        <option value="2" name="Education">Education</option>
+                        <option value="3" name="Environment & Animals">Environment & Animals</option>
+                        <option value="4" name="Health">Health</option>
+                        <option value="5" name="Human Services">Human Services</option>
+                        <option value="6" name="International, Foreign Affairs">International, Foreign Affairs</option>
+                        <option value="7" name="Public, Societal Benefit">Public, Societal Benefit</option>
+                        <option value="8" name="Religious">Religion Related</option>
+                        <option value="9" name="Membership Benefit">Mutual/Membership Benefit</option>
+                        <option value="10" name="Other">Unclassified/Unknown</option>
+                    </select>
+                </div> -->
+                <input class="input is-focused my-3" type="text" id="postalCodeInput"
+                    placeholder="Input your Zip Code!" />
+                <button class="button is-primary is-outlined" id="submit" type="submit">Submit Search</button>
+            </form>
+            <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
+        </div>
+        </div>
+        
+        <div class="col-6 col-md-9 p-3">
+            <h2>Map: <span id="result-text"></span></h2>
+            <div id="brewery-info"></div>
+        </div>
+        
+        <div class="col-6 col-md-9 p-3">
+            <h2>Search Results: <span id="result-text"></span></h2>
+            <div id="brewery-info"></div>
+        </div>
+
+    <div class="columns is-size-5">
+        <div class="column col-1 mx-5 p-3">
+            <div class="column col-1 mx-5 p-3">
+                <div class="cell" id="zip-results">List Here</div>
+            </div>
+        </div>
+        <div class="column col-2">
+            <!-- For Location Display -->
+            <div id="map" style="width: 80%; height: 100%; position:absolute; left: 325px;">Display Location:</div>
+            <div id="map-container">
+                <div id="map" class="map">Display Location:</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Include the Radar SDK script -->
+    <script src="https://js.radar.com/v4.1.18/radar.js"></script>
+    <!-- Our Javascript -->
+    <script src="assets/js/script2.js"></script>
 
 </body>
-
-<script src="wip.js"></script>
 
 </html>

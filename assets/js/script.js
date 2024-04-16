@@ -14,7 +14,9 @@ function readSearchesFromStorage() {
 
 
 function searchApi(organization) {
-    const publicaAPI = `https://projects.propublica.org/nonprofits/api/v2`;
+    //sort the search results by category 
+    //
+    const publicaAPI = `https://projects.propublica.org/nonprofits/api/v2/search.json?q=${organization}`;
 
     fetch(publicaAPI) 
         .then(function(response){
@@ -56,6 +58,5 @@ function displayOrganization(organization) {
 
     }
 }
-
 
 
