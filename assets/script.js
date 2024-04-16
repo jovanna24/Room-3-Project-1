@@ -42,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
           const lat = parseFloat(latitude);
           const lng = parseFloat(longitude);
           console.log('Parsed Latitude:', lat, 'Parsed Longitude:', lng);
-          // Check if latitude and longitude are valid numbers
           if (isNaN(lat) || isNaN(lng)) {
               throw new Error('Invalid latitude or longitude values');
           }
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('submitButton').addEventListener('click', (event) => {
       event.preventDefault();
       
-      // Call getLocationData and handle the returned promise
+      // Call getLocationData and handle the return
       getLocationData()
           .then(location => {
               if (location) {
