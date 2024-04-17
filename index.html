@@ -4,52 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Connected!</title>
-    <!-- Bulma Stylesheet for styling -->
+    <!-- Bulma CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
-    <!-- Leaflet CSS for the map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Our custom Stylesheet -->
-    <link rel="stylesheet" href="assets/style.css">
+        <!-- Leaflet CSS for the map -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <!-- Our custom Stylesheet -->
+        <link rel="stylesheet" href="assets/style.css">
+    
 </head>
 <body>
-    <!-- Instructions banner -->
-    <div class="notification is-primary">
-        <strong>Git Connected!</strong> - Discover local breweries near you! Enter your ZIP code to get started.
+
+        <!-- Instructions banner -->
+        <div class="notification is-primary">
+            <strong>Git Connected!</strong> - Discover local breweries near you! Enter your ZIP code to get started.
+        </div>
+    
+    <!-- Button to open the modal -->
+    <button id="open-modal" class="button is-primary">Open Form</button>
+
+    <!-- Modal (PopUp) Form -->
+    <div class="modal" id="modal">
+        <div class="modal-background"></div>
+        <div class="modal-content my-1">
+            <form id="userInterestsForm" class="box">
+                <div class="field">
+                    <label class="label">Zip Code:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="postalCodeInput" placeholder="Input your Zip Code!">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Distance (miles):</label>
+                    <div class="control">
+                        <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1" max="100">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit">Submit Search</button>
+                    </div>
+                </div>
+            </form>
+            <button class="modal-close is-large" aria-label="close"></button>
+        </div>
     </div>
 
-    <!-- Input for ZIP code -->
-    <div class="section">
-        <div class="container">
-            <div class="field has-addons">
-                <div class="control is-expanded">
-                    <input class="input is-medium" type="text" id="postalCodeInput" placeholder="Enter your Zip Code">
-                </div>
-                <div class="control">
-                    <a class="button is-medium is-info" id="submit">Search</a>
-                </div>
+        <!-- Map display area -->
+        <div class="section">
+            <div class="container">
+                <div id="map" style="height: 400px;"></div>
             </div>
         </div>
-    </div>
-
-    <!-- Map display area -->
-    <div class="section">
-        <div class="container">
-            <div id="map" style="height: 400px;"></div>
+    
+        <!-- Brewery information area -->
+        <div class="section">
+            <div class="container" id="search-brewery-info">
+                <!-- Brewery info will be displayed here -->
+            </div>
         </div>
-    </div>
+    
+    
 
-    <!-- Brewery information area -->
-    <div class="section">
-        <div class="container" id="search-brewery-info">
-            <!-- Brewery info will be displayed here -->
-        </div>
-    </div>
-
-    <!-- Include Leaflet JS for mapping -->
+    <!-- Scripts  -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!-- Radar API Key (Please use your own key here) -->
-    <script src="https://js.radar.io/v4.1.18/radar.js"></script>
-    <!-- Our custom JavaScript -->
     <script src="assets/script.js"></script>
 </body>
 </html>
