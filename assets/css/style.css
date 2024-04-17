@@ -1,0 +1,21 @@
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css";
+
+.cell div {
+  align-self: center;
+}
+
+#map-container {
+  width: 80%;
+  margin: 20px auto;
+  position: relative;
+}
+
+#map {
+  display: none;
+  /* Initially hidden */
+  width: 100%;
+  height: 500px;
+  /* Set a fixed height */
+  position: relative;
+  z-index: 0;
+}
