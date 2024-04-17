@@ -1,86 +1,143 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const openModalButton = document.getElementById('open-modal');
-  const closeButton = document.getElementById('modal-close');
-  const modalForm = document.getElementById('modal');
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('modal');
+    const openModalButton = document.getElementById('open-modal');
+    const closeModalButton = document.querySelector('.modal-close');
+    const userInterestsForm = document.getElementById('userInterestsForm');
+    const resultsContainer = document.getElementById('search-brewery-info');
+    let myMap; 
 
-  // Functions to open/close modal 
-  function openModal() {
-      modalForm.classList.add('is-active');
-  }
+// Function to calculate distance
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 3958.8;
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance;
+}
 
-  function closeModal() {
-      modalForm.classList.remove('is-active');
-  }
+// Function to convert degrees to radians
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
 
-  // Add event listener to openModalBtn
-  openModalButton.addEventListener('click', openModal);
-  closeButton.addEventListener('click', closeModal);
+    // Initialize the map
+    function initMap(lat, lng) {
+        if (myMap) myMap.remove(); 
 
-  // Function to get location data
-  function getLocationData() {
-      Radar.initialize('prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148');
-      
-      const postalCode = document.getElementById('postalCodeInput').value;
-      const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148';
-  
-      // Make the API request
-      return fetch(`https://api.radar.io/v1/geocode/forward?query=${postalCode}`, {
-          headers: {
-              Authorization: apiKey
-          }
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log('API Response:', data);
-          const { latitude, longitude } = data.addresses[0];
-          console.log('Latitude:', latitude, 'Longitude:', longitude);
-          const lat = parseFloat(latitude);
-          const lng = parseFloat(longitude);
-          console.log('Parsed Latitude:', lat, 'Parsed Longitude:', lng);
-          if (isNaN(lat) || isNaN(lng)) {
-              throw new Error('Invalid latitude or longitude values');
-          }
-          return { latitude: lat, longitude: lng };
-      })
-      .catch(error => {
-          console.error('There was a problem with the fetch operation:', error);
-          return null;
-      });
-  }
+        myMap = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(myMap);
+    }
 
-  document.getElementById('submitButton').addEventListener('click', (event) => {
-      event.preventDefault();
-      
-      // Call getLocationData and handle the return
-      getLocationData()
-          .then(location => {
-              if (location) {
-                  // Create a map centered at the coordinates
-                  const map = Radar.ui.map({
-                      container: 'map',
-                      style: 'radar-default-v1',
-                      center: [location.longitude, location.latitude],
-                      zoom: 11
-                  });
+    // Function to remove the map
+    function removeMap() {
+        if (myMap) {
+            myMap.remove();
+            myMap = null;
+        }
+    }
 
-                  // Create a marker at the coordinates
-                  const marker = Radar.ui.marker({ text: 'Location' })
-                      .setLngLat([location.longitude, location.latitude])
-                      .addTo(map);
+    openModalButton.addEventListener('click', function () {
+        modal.classList.add('is-active');
+        removeMap();
+    });
 
-                  closeModal();
-              } else {
-                  console.log('Failed to retrieve location data.');
-              }
-          })
-          .catch(error => {
-              console.error('Error:', error);
-          });
-  });
+    closeModalButton.addEventListener('click', function () {
+        modal.classList.remove('is-active');
+    });
+
+    userInterestsForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const postalCode = document.getElementById('postalCodeInput').value.trim();
+        const distance = document.getElementById('distanceInput').value.trim();
+
+        if (!postalCode || !distance) {
+            alert('Please input both your zipcode and distance.');
+            return;
+        }
+
+        fetchLocationAndDisplayBreweries(postalCode, distance);
+        modal.classList.remove('is-active');
+    });
+
+    function fetchLocationAndDisplayBreweries(zipcode, distance) {
+        const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148'; 
+        fetch(`https://api.radar.io/v1/geocode/forward?query=${zipcode}`, {
+            headers: {
+                Authorization: apiKey
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.addresses && data.addresses.length > 0) {
+                    const {
+                        latitude,
+                        longitude
+                    } = data.addresses[0];
+                    initMap(latitude, longitude); 
+                    searchBreweryApi(zipcode, distance, latitude, longitude); 
+                } else {
+                    alert('Failed to retrieve location data.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location data:', error);
+                alert('Error fetching location data.');
+            });
+    }
+
+    function searchBreweryApi(zipcode, distance, lat, lng) {
+        const breweryURL = `https://api.openbrewerydb.org/breweries?by_dist=${lat},${lng}&per_page=10`;
+
+        fetch(breweryURL)
+            .then(response => response.json())
+            .then(breweries => {
+                displayBreweries(breweries, lat, lng);
+            })
+            .catch(error => {
+                console.error('Error fetching breweries:', error);
+                alert('Error fetching breweries data.');
+            });
+    }
+
+    function displayBreweries(breweries, userLatitude, userLongitude) {
+        resultsContainer.innerHTML = '';
+
+        if (breweries.length === 0) {
+            resultsContainer.innerHTML = '<p>No breweries found in this area.</p>';
+            return;
+        }
+
+        const distanceInput = parseFloat(document.getElementById('distanceInput').value.trim());
+
+        breweries.forEach((brewery, index) => {
+            // Calculating distance between user location and brewery location
+            const distance = calculateDistance(userLatitude, userLongitude, brewery.latitude, brewery.longitude);
+            
+            // Check if the brewery is within the specified distance
+            if (distance <= distanceInput) {
+                const breweryDiv = document.createElement('div');
+                breweryDiv.classList.add('box');
+                breweryDiv.innerHTML = `
+                    <h3> ${brewery.name}</h3>
+                    <p>${brewery.street || 'No address available'}, ${brewery.city}, ${brewery.state}</p>
+                    <p>Distance: ${distance.toFixed(2)} miles</p>
+                    <a href="${brewery.website_url}" target="_blank" class="button is-link is-small">Visit Website</a>
+                `;
+                resultsContainer.appendChild(breweryDiv);
+
+                // Add marker for the brewery on the map
+                const breweryLatLng = L.latLng(brewery.latitude, brewery.longitude);
+                const breweryMarker = L.marker(breweryLatLng).addTo(myMap);
+                breweryMarker.bindPopup(`<b> ${brewery.name}</b><br>${brewery.city}, ${brewery.state}`).openPopup();
+            }
+        });
+    }
 });
-
