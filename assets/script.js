@@ -2,46 +2,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
     const closeModalButton = document.querySelector('.modal-close');
-    const userInterestsForm = document.getElementById('userInterestsForm');
+    const form = document.getElementById('brewery-search-form');
     const resultsContainer = document.getElementById('search-brewery-info');
-    let myMap; 
-
-// Function to calculate distance
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 3958.8;
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance;
-}
-
-// Function to convert degrees to radians
-function toRadians(degrees) {
-    return degrees * Math.PI / 180;
-}
-
-    // Initialize the map
-    function initMap(lat, lng) {
-        if (myMap) myMap.remove(); 
-
-        myMap = L.map('map').setView([lat, lng], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © OpenStreetMap contributors',
-            maxZoom: 18
-        }).addTo(myMap);
-    }
-
-    // Function to remove the map
-    function removeMap() {
-        if (myMap) {
-            myMap.remove();
-            myMap = null;
-        }
-    }
+    let myMap;
 
     openModalButton.addEventListener('click', function () {
         modal.classList.add('is-active');
@@ -52,7 +15,7 @@ function toRadians(degrees) {
         modal.classList.remove('is-active');
     });
 
-    userInterestsForm.addEventListener('submit', function (event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const postalCode = document.getElementById('postalCodeInput').value.trim();
@@ -139,5 +102,42 @@ function toRadians(degrees) {
                 breweryMarker.bindPopup(`<b> ${brewery.name}</b><br>${brewery.city}, ${brewery.state}`).openPopup();
             }
         });
+    }
+
+    // Function to initialize the map
+    function initMap(lat, lng) {
+        if (myMap) myMap.remove(); 
+
+        myMap = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(myMap);
+    }
+
+    // Function to remove the map
+    function removeMap() {
+        if (myMap) {
+            myMap.remove();
+            myMap = null;
+        }
+    }
+
+    // Function to calculate distance
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 3958.8;
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+        return distance;
+    }
+
+    // Function to convert degrees to radians
+    function toRadians(degrees) {
+        return degrees * Math.PI / 180;
     }
 });
