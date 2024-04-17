@@ -178,7 +178,7 @@ function displayBreweryInfo(breweryObj){
 function displayLocationData(locationInfo) { 
     console.log(locationInfo); 
 
-    document.getElementById('submitButton').addEventListener('click', (event) => {
+    document.getElementById('submit').addEventListener('click', (event) => {
         event.preventDefault();
         
         // Call getLocationData and handle the return
