@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
     const closeModalButton = document.querySelector('.modal-close');
-    const userInterestsForm = document.getElementById('userInterestsForm');
+    const brewerySearchForm = document.getElementById('brewery-search-form');
     const resultsContainer = document.getElementById('search-brewery-info');
     let myMap; // Map variable
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.classList.remove('is-active');
     });
 
-    userInterestsForm.addEventListener('submit', function(event) {
+    brewerySearchForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
         const postalCode = document.getElementById('postalCodeInput').value.trim();
