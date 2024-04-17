@@ -1,95 +1,72 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Git Brewed!</title>
-    <!-- Bulma Stylesheet -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Connected!</title>
+    <!-- Bulma CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
-    <!-- Map Stylesheet -->
-    <link href="https://js.radar.com/v4.1.18/radar.css" rel="stylesheet">
-    <!-- Our Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+        <!-- Leaflet CSS for the map -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <!-- Our custom Stylesheet -->
+        <link rel="stylesheet" href="assets/css/style.css">
+    
 </head>
-
 <body>
 
-    <!-- Instructions banner -->
-    <div class="fixed-grid has-4-cols">
-        <div class="grid">
-            <div class="cell is-col-span-3 has-text-weight-semibold is-size-2 has-text-primary my-5 ml-5">
-                Git
-                Brewed!</div>
-            <div class="cell has-text-centered m-3">
-                <button id="open-modal" class="button is-large is-primary is-outlined m-3"
-                    data-target="userInterestsForm">Open
-                    Form</button>
-            </div>
-            <div class="cell is-col-span-4 ml-5">This site is designed to
-                show users the location of nearby breweries, provide information about them, and provide driving directions.   <strong> Click on </strong>the
-                <code>Open Form</code> button to get started!
-            </div>
+        <!-- Instructions banner -->
+        <div class="notification is-primary">
+            <strong>Git Connected!</strong> - Discover local breweries near you! Enter your ZIP code to get started.
         </div>
-    </div>
+    
+    <!-- Button to open the modal -->
+    <button id="open-modal" class="button is-primary">Open Form</button>
 
-    <!-- Modal(PopUp) Form -->
+    <!-- Modal (PopUp) Form -->
     <div class="modal" id="modal">
         <div class="modal-background"></div>
         <div class="modal-content my-1">
-            <form id="userInterestsForm" class="has-background-info-dark has-text-info-dark-invert">
-                <!-- <div class="select is-multiple mx-1">
-                    <label>Select Category:</label>
-                    <select multiple size="10">
-                        <option value="1" name="Arts, Culture & Humanities">Arts, Culture & Humanities</option>
-                        <option value="2" name="Education">Education</option>
-                        <option value="3" name="Environment & Animals">Environment & Animals</option>
-                        <option value="4" name="Health">Health</option>
-                        <option value="5" name="Human Services">Human Services</option>
-                        <option value="6" name="International, Foreign Affairs">International, Foreign Affairs</option>
-                        <option value="7" name="Public, Societal Benefit">Public, Societal Benefit</option>
-                        <option value="8" name="Religious">Religion Related</option>
-                        <option value="9" name="Membership Benefit">Mutual/Membership Benefit</option>
-                        <option value="10" name="Other">Unclassified/Unknown</option>
-                    </select>
-                </div> -->
-                <input class="input is-focused my-3" type="text" id="postalCodeInput"
-                    placeholder="Input your Zip Code!" />
-                <button class="button is-primary is-outlined" id="submit" type="submit">Submit Search</button>
+            <form id="userInterestsForm" class="box">
+                <div class="field">
+                    <label class="label">Zip Code:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="postalCodeInput" placeholder="Input your Zip Code!">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Distance (miles):</label>
+                    <div class="control">
+                        <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1" max="100">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link" type="submit">Submit Search</button>
+                    </div>
+                </div>
             </form>
-            <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
-        </div>
-        </div>
-        
-    <div class="columns is-size-5">
-        <div class="column col-6 col-md-9 p-3">
-            <h2>Map: <span id="map-result-text"></span></h2>
-            <div id="map-brewery-info"></div>
-        </div>
-        
-        <div class="column col-6 col-md-9 p-3">
-            <h2>Search Results: <span id="search-result-text"></span></h2>
-            <div id="search-brewery-info"></div>
-        </div>
-
-        <div class="column col-1 mx-5 p-3">
-            <div class="cell" id="zip-results">List Here</div>
-        </div>
-
-        <div class="column col-2">
-            <!-- For Location Display -->
-            <div id="map-container">
-                <div class="map">Display Location:</div>
-            </div>
+            <button class="modal-close is-large" aria-label="close"></button>
         </div>
     </div>
 
+        <!-- Map display area -->
+        <div class="section">
+            <div class="container">
+                <div id="map" style="height: 400px;"></div>
+            </div>
+        </div>
+    
+        <!-- Brewery information area -->
+        <div class="section">
+            <div class="container" id="search-brewery-info">
+                <!-- Brewery info will be displayed here -->
+            </div>
+        </div>
+    
+    
 
-    <!-- Include the Radar SDK script -->
-    <script src="https://js.radar.com/v4.1.18/radar.js"></script>
-    <!-- Our Javascript -->
+    <!-- Scripts  -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="assets/js/script2.js"></script>
-
 </body>
-
 </html>

@@ -1,249 +1,105 @@
-// Add variables (global scope)
-const userInterestsForm = document.getElementById('userInterestsForm')
-const locationInput = document.getElementById('postalCodeInput');
-
-
-
-// Global variables for DOM elements
-const openModalButton = document.getElementById('open-modal');
-const closeButton = document.getElementById('modal-close');
-const modalForm = document.getElementById('modal');
-const submitSearch = document.getElementById('submit');
-const resultsListEl = document.getElementById('results');
-const resultContentEl = document.getElementById('search-brewery-info');
-const resultTextEl= document.getElementById('result-text');
-
-// Add event listeners
 document.addEventListener('DOMContentLoaded', function () {
-    userInterestsForm.addEventListener('submit', handleFormSubmit);
-    submitSearch.addEventListener('submit', saveResultToStorage);
-    openModalButton.addEventListener('click', openModal);
-    closeButton.addEventListener('click', closeModal);
-});
+    const modal = document.getElementById('modal');
+    const openModalButton = document.getElementById('open-modal');
+    const closeModalButton = document.querySelector('.modal-close');
+    const userInterestsForm = document.getElementById('userInterestsForm');
+    const resultsContainer = document.getElementById('search-brewery-info');
+    let myMap; // Map variable
 
-// Functions to open/close modal 
-function openModal() {
-    modalForm.classList.add('is-active');
-}
+    // Initialize the map
+    function initMap(lat, lng) {
+        if (myMap) myMap.remove(); // Clear existing map instance if exists
 
-function closeModal() {
-    modalForm.classList.remove('is-active');
-}
-
-// On form submit, save search values for APIs
-const SAVE_KEY = "search";
-
-function handleFormSubmit(event) {
-    event.preventDefault();
-
-    const searchInputVal = document.querySelector('#postalCodeInput').value; 
-
-    if (!searchInputVal) {
-        console.error('Please input your zipcode.'); 
-        return;
+        myMap = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(myMap);
     }
 
-    const zipcode = searchInputVal.trim(); 
-    searchBreweryApi(zipcode); 
-    getLocationData(zipcode);
-    saveResultToStorage(zipcode);
-    
-    closeModal();
-} 
-
-function searchBreweryApi (zipcode) {
-    const breweryURL = `https://api.openbrewerydb.org/v1/breweries?q=${zipcode}`;
-
-    fetch(breweryURL) 
-        .then(function(response) {
-            if(!response.ok) {
-                throw new Error(`Network response was not okay`);
-            }
-            return response.json();
-        }) 
-    .then(function(breweryData){
-        console.log('Brewery Data:', breweryData); 
-
-        if(!breweryData.length) {
-            console.log('No results found.');
-            resultContentEl.innerHTML = '<h3>No results found, search again!</h3>';
-        } else {
-            resultContentEl.innerHTML= ''; 
-            breweryData.forEach(brewery =>{
-                displayBreweryInfo(brewery);
-            });
-        }
-    })
-        .catch(function(error) {
-            console.error('Error fetching data:', error);
-            resultContentEl.innerHTML = '<h3>Error fetching data. Please try again later.</h3>';
-        });
-}
-
-function getLocationData() {
-    Radar.initialize('prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148');
-    
-    const postalCode = document.getElementById('postalCodeInput').value;
-    const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148';
-
-    // Make the API request
-    return fetch(`https://api.radar.io/v1/geocode/forward?query=${postalCode}`, {
-        headers: {
-            Authorization: apiKey
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('API Response:', data);
-        const { latitude, longitude } = data.addresses[0];
-        console.log('Latitude:', latitude, 'Longitude:', longitude);
-        const lat = parseFloat(latitude);
-        const lng = parseFloat(longitude);
-        console.log('Parsed Latitude:', lat, 'Parsed Longitude:', lng);
-        if (isNaN(lat) || isNaN(lng)) {
-            throw new Error('Invalid latitude or longitude values');
-        }
-        return { latitude: lat, longitude: lng };
-    })
-    .then(function(coords){
-        console.log('Location Coordinates:',coords); 
-        displayLocationData(coords);
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-        return null;
+    openModalButton.addEventListener('click', function() {
+        modal.classList.add('is-active');
     });
-} 
 
-
-function displaySavedSearches () {
-    const results = readResultsFromStorage(); 
-    const savedZipcodeList = document.querySelector('#zip-results'); 
-
-    savedZipcodeList.innerHTML = ''; 
-
-    results.forEach(zipcode => {
-        const button = document.createElement('button'); 
-        button.classList.add('btn', 'active'); 
-        button.textContent= zipcode;
-
-        button.addEventListener('click', ()=>{
-            searchBreweryApi(zipcode); 
-            
-        }); 
-
-        savedZipcodeList.appendChild(button);
+    closeModalButton.addEventListener('click', function() {
+        modal.classList.remove('is-active');
     });
-}
 
-function displayBreweryInfo(breweryObj){
-    //console.log(breweryObj); 
-
-    const resultCard = document.createElement('div'); 
-    resultCard.classList.add('card'); 
-
-    const resultBody = document.createElement('div'); 
-    resultBody.classList.add('card-body'); 
-    resultCard.append(resultBody); 
-
-    const titleEl= document.createElement('h3'); 
-    titleEl.textContent= breweryObj.name;
-
-    const bodyContentEl = document.createElement('p'); 
-    bodyContentEl.innerHTML += 
-        `<strong>Address:</strong>${breweryObj.address_1}<br/>`+ 
-        `<strong>City:</strong>${breweryObj.city}<br/>`+ 
-        `<strong>State:</strong>${breweryObj.state_province}<br/>`+ 
-        `<strong>Brewery Website:</strong>${breweryObj.website_url}<br/>`;
-
-    if (breweryObj.phone) {
-        const cleanedPhoneNumber = breweryObj.phone.replace(/\D/g, '');
-        const formattedPhoneNumber = `(${cleanedPhoneNumber.slice(0, 3)}) ${cleanedPhoneNumber.slice(3, 6)}-${cleanedPhoneNumber.slice(6)}`;
-        bodyContentEl.innerHTML += `<strong>Phone Number:</strong>${formattedPhoneNumber}<br/>` 
-    } else {
-        bodyContentEl.innerHTML += `<strong>Phone Number:</strong> Not Available<br/>`;
-    }
-
-    
-
-    const linkButtonEl = document.createElement('a'); 
-    linkButtonEl.textContent= 'Read More'; 
-    linkButtonEl.setAttribute('href', breweryObj.url); 
-    linkButtonEl.classList.add('btn', 'btn-dark'); 
-
-    resultBody.append(titleEl, bodyContentEl, linkButtonEl); 
-
-    resultContentEl.append(resultCard);
-
-    console.log('Brewery Object:', breweryObj);
-    
-}
-
-function displayLocationData(locationInfo) { 
-    console.log(locationInfo); 
-
-    submitSearch.addEventListener('click', (event) => {
-    //document.getElementById('submitButton').addEventListener('click', (event) => {
+    userInterestsForm.addEventListener('submit', function(event) {
         event.preventDefault();
-        
-        // Call getLocationData and handle the return
-        getLocationData()
-            .then(location => {
-                if (location) {
-                    // Create a map centered at the coordinates
-                    const map = Radar.ui.map({
-                        container: 'map',
-                        style: 'radar-default-v1',
-                        center: [location.longitude, location.latitude],
-                        zoom: 11
-                    });
-  
-                    // Create a marker at the coordinates
-                    const marker = Radar.ui.marker({ text: 'Location' })
-                        .setLngLat([location.longitude, location.latitude])
-                        .addTo(map);
-  
-                    closeModal();
-                } else {
-                    console.log('Failed to retrieve location data.');
-                }
+
+        const postalCode = document.getElementById('postalCodeInput').value.trim();
+        const distance = document.getElementById('distanceInput').value.trim();
+
+        if (!postalCode || !distance) {
+            alert('Please input both your zipcode and distance.');
+            return;
+        }
+
+        fetchLocationAndDisplayBreweries(postalCode, distance);
+        modal.classList.remove('is-active');
+    });
+
+    function fetchLocationAndDisplayBreweries(zipcode, distance) {
+        const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148';  // Replace with your actual Radar API key
+        fetch(`https://api.radar.io/v1/geocode/forward?query=${zipcode}`, {
+            headers: { Authorization: apiKey }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.addresses && data.addresses.length > 0) {
+                const { latitude, longitude } = data.addresses[0];
+                initMap(latitude, longitude); // Initialize the map with the new center
+                searchBreweryApi(zipcode, distance, latitude, longitude); // Now fetch breweries
+            } else {
+                alert('Failed to retrieve location data.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
+            alert('Error fetching location data.');
+        });
+    }
+
+    function searchBreweryApi(zipcode, distance, lat, lng) {
+        const breweryURL = `https://api.openbrewerydb.org/breweries?by_dist=${lat},${lng}&per_page=10`;
+
+        fetch(breweryURL)
+            .then(response => response.json())
+            .then(breweries => {
+                displayBreweries(breweries);
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error fetching breweries:', error);
+                alert('Error fetching breweries data.');
             });
-    });
-
-  };
-
-
-// Function to set up string in localStorage
-function saveResultToStorage(zipcode) {
-    let results = readResultsFromStorage(); 
-
-    if (results.indexOf(zipcode)=== -1) {
-        results.push(zipcode); 
-        localStorage.setItem('results', JSON.stringify(results)); 
-        console.log(zipcode + ' New postal code stored.'); 
-    } else {
-        console.log(zipcode + ' Postal code already exists.');
     }
-}
 
-// Retrieve search string
-function readResultsFromStorage () {
-    let results = JSON.parse(localStorage.getItem('results')); 
-    if (!results) {
-        results = [];
+    function displayBreweries(breweries) {
+        resultsContainer.innerHTML = ''; // Clear previous results
+
+        if (breweries.length === 0) {
+            resultsContainer.innerHTML = '<p>No breweries found in this area.</p>';
+            return;
+        }
+
+        breweries.forEach(brewery => {
+            // Creating HTML structure to display each brewery
+            const breweryDiv = document.createElement('div');
+            breweryDiv.classList.add('box'); // Using Bulma's box class for styling
+            breweryDiv.innerHTML = `
+                <h3>${brewery.name}</h3>
+                <p>${brewery.street || 'No address available'}, ${brewery.city}, ${brewery.state}</p>
+                <a href="${brewery.website_url}" target="_blank" class="button is-link is-small">Visit Website</a><br/>`;
+            if (brewery.phone) {
+                const cleanedPhoneNumber = brewery.phone.replace(/\D/g, '');
+                const formattedPhoneNumber = `(${cleanedPhoneNumber.slice(0, 3)}) ${cleanedPhoneNumber.slice(3, 6)}-${cleanedPhoneNumber.slice(6)}`;
+                breweryDiv.innerHTML += `<strong>Phone Number:</strong> ${formattedPhoneNumber}<br/>`;
+            } else {
+                breweryDiv.innerHTML += `<strong>Phone Number:</strong> Not Available<br/>`;
+            }
+         
+            resultsContainer.appendChild(breweryDiv);
+        });
     }
-    return results;
-}
-
-
-document.addEventListener('DOMContentLoaded', function(){
-    displaySavedSearches();
 });
