@@ -10,7 +10,7 @@ const closeButton = document.getElementById('modal-close');
 const modalForm = document.getElementById('modal');
 const submitSearch = document.getElementById('submit');
 const resultsListEl = document.getElementById('results');
-const resultContentEl = document.getElementById('brewery-info');
+const resultContentEl = document.getElementById('search-brewery-info');
 const resultTextEl= document.getElementById('result-text');
 
 // Add event listeners
@@ -74,10 +74,6 @@ function searchBreweryApi (zipcode) {
             });
         }
     })
-        // .then(function(map) {
-        //     console.log('Brewery Data:',map); 
-        //     displayBreweryInfo(map);
-        // })
         .catch(function(error) {
             console.error('Error fetching data:', error);
             resultContentEl.innerHTML = '<h3>Error fetching data. Please try again later.</h3>';
@@ -146,7 +142,7 @@ function displaySavedSearches () {
 }
 
 function displayBreweryInfo(breweryObj){
-    console.log(breweryObj); 
+    //console.log(breweryObj); 
 
     const resultCard = document.createElement('div'); 
     resultCard.classList.add('card'); 
@@ -178,7 +174,8 @@ function displayBreweryInfo(breweryObj){
 function displayLocationData(locationInfo) { 
     console.log(locationInfo); 
 
-    document.getElementById('submit').addEventListener('click', (event) => {
+    submitSearch.addEventListener('click', (event) => {
+    //document.getElementById('submitButton').addEventListener('click', (event) => {
         event.preventDefault();
         
         // Call getLocationData and handle the return
