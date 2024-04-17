@@ -156,7 +156,20 @@ function displayBreweryInfo(breweryObj){
 
     const bodyContentEl = document.createElement('p'); 
     bodyContentEl.innerHTML += 
-        `<strong>Address:</strong>${breweryObj.address_1}`; 
+        `<strong>Address:</strong>${breweryObj.address_1}<br/>`+ 
+        `<strong>City:</strong>${breweryObj.city}<br/>`+ 
+        `<strong>State:</strong>${breweryObj.state_province}<br/>`+ 
+        `<strong>Brewery Website:</strong>${breweryObj.website_url}<br/>`;
+
+    if (breweryObj.phone) {
+        const cleanedPhoneNumber = breweryObj.phone.replace(/\D/g, '');
+        const formattedPhoneNumber = `(${cleanedPhoneNumber.slice(0, 3)}) ${cleanedPhoneNumber.slice(3, 6)}-${cleanedPhoneNumber.slice(6)}`;
+        bodyContentEl.innerHTML += `<strong>Phone Number:</strong>${formattedPhoneNumber}<br/>` 
+    } else {
+        bodyContentEl.innerHTML += `<strong>Phone Number:</strong> Not Available<br/>`;
+    }
+
+    
 
     const linkButtonEl = document.createElement('a'); 
     linkButtonEl.textContent= 'Read More'; 
