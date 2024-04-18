@@ -31,7 +31,7 @@ STILL TO DO
 - Footer/final styling adjustments
 
 APIs USED
-1: https://projects.propublica.org/nonprofits/api
+1: 
 2: 
 
 SCREENSHOT & LINK TO DEPLOYED APPLICATION

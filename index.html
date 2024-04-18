@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Breweries!</title>
     <!-- Bulma CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
     <!-- Leaflet CSS for the map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <!-- Our custom stylesheet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Our custom Stylesheet -->
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -21,28 +21,40 @@
             <div class="cell is-col-span-3 has-text-weight-semibold is-size-2 has-text-primary my-5 ml-5">
                 Git
                 Breweries!</div>
-            <div class="cell has-text-centered m-5">
+            <div class="cell has-text-centered m-3">
+                <!-- Button to open the modal -->
                 <button id="open-modal" class="button is-large is-primary is-outlined m-3" data-target="userInput">Find
                     🍻</button>
             </div>
-            <div class="cell is-col-span-4 ml-5 is-size-5">Discover local breweries near you! <strong> Click on
-                </strong>the
+            <div class="cell is-col-span-4 ml-5">Discover local breweries near you! <strong> Click on </strong>the
                 <code>Find 🍺</code> button to get started!
             </div>
         </div>
     </div>
 
-    <!-- Modal(PopUp) Form -->
+    <!-- Modal (PopUp) Form -->
     <div class="modal" id="modal">
         <div class="modal-background"></div>
         <div class="modal-content my-1">
-            <form id="locationInput" class="has-background-info-dark has-text-info-dark-invert">
-                <label for="postalCodeInput">Your Zipcode:</label>
-                <input class="input is-focused my-3" type="text" id="postalCodeInput"
-                    placeholder="Input your Zip Code!" />
-                <label for="distanceInput">Distance (miles):</label>
-                <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1" max="100">
-                <button class="button is-success is-outlined" type="submit" id="submit">Submit</button>
+            <form id="locationInput" class="box">
+                <div class="field">
+                    <label class="label">Zip Code:</label>
+                    <div class="control">
+                        <input class="input" type="text" id="postalCodeInput" placeholder="Input your Zip Code!">
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Distance (miles):</label>
+                    <div class="control">
+                        <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1"
+                            max="100">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-link is-outlined" type="submit">Submit Search</button>
+                    </div>
+                </div>
             </form>
             <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
         </div>
@@ -62,10 +74,9 @@
         </div>
     </div>
 
-    <!-- Main Javascript -->
-    <script src="assets/js/script.js"></script>
-    <!-- Map Javascript -->
+    <!-- Scripts  -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="assets/js/script.js"></script>
 
 </body>
 
