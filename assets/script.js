@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
     const closeModalButton = document.querySelector('.modal-close');
-    const userInterestsForm = document.getElementById('userInterestsForm'); // Updated ID
+    const userInterestsForm = document.getElementById('locationInput');
     const resultsContainer = document.getElementById('search-brewery-info');
     let myMap;
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.classList.remove('is-active');
     });
 
-    userInterestsForm.addEventListener('submit', function (event) { // Updated ID
+    userInterestsForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         const postalCode = document.getElementById('postalCodeInput').value.trim();
@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(breweries => {
                 displayBreweries(breweries, lat, lng, distance);
-                saveResultToStorage(zipcode, distance); // Save the result to storage
-                displaySavedSearch(); // Update displayed search
+                saveResultToStorage(zipcode, distance); 
+                displaySavedSearch(); 
             })
             .catch(error => {
                 console.error('Error fetching breweries:', error);
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
             button.textContent = `Last search: ${zipcode}`;
 
             button.addEventListener('click', () => {
-                fetchLocationAndDisplayBreweries(zipcode, distance); // Pass both zipcode and distance
+                fetchLocationAndDisplayBreweries(zipcode, distance); 
             });
 
             savedZipcodeList.appendChild(button);
@@ -171,5 +171,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    displaySavedSearch(); // Call after defining event listeners
+    displaySavedSearch();
 });
