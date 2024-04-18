@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalForm = document.getElementById('locationInput');
     const resultsContainer = document.getElementById('search-brewery-info');
     let myMap;
-
+// Function to calculate distance radius
     function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 3958.8;
         const lat1Rad = lat1 * Math.PI / 180;
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const distance = R * c;
         return distance;
     }
-
+// Function to initialize and display/remove map
     function initMap(lat, lng) {
         if (myMap) myMap.remove();
 
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             myMap = null;
         }
     }
-
+// Functions to open/close modal
     openModalButton.addEventListener('click', function () {
         modal.classList.add('is-active');
         removeMap();
@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.classList.remove('is-active');
     });
 
-    modalForm.addEventListener('submit', function (event) { // Updated ID
+    modalForm.addEventListener('submit', function (event) { 
         event.preventDefault();
-
+// trim any excess whitespace
         const postalCode = document.getElementById('postalCodeInput').value.trim();
         const distance = document.getElementById('distanceInput').value.trim();
 
@@ -100,6 +100,50 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
+    function saveResultToStorage(zipcode) {
+        let results = readResultsFromStorage();
+     
+     
+        if (results.indexOf(zipcode)=== -1) {
+            results.push(zipcode);
+            localStorage.setItem('results', JSON.stringify(results));
+            console.log(zipcode + ' New postal code stored.');
+        } else {
+            console.log(zipcode + ' Postal code already exists.');
+        }
+     }
+     
+     // Retrieve search string
+     function readResultsFromStorage () {
+        let results = JSON.parse(localStorage.getItem('results'));
+        if (!results) {
+            results = [];
+        }
+        return results;
+     }
+
+     function displaySavedSearches () {
+        const results = readResultsFromStorage();
+        const savedZipcodeList = document.querySelector('#zip-results');
+   
+        savedZipcodeList.innerHTML = '';
+   
+        results.forEach(zipcode => {
+            const button = document.createElement('button');
+            button.classList.add('btn', 'active');
+            button.textContent= `Previous searches: ${zipcode}`;
+   
+            button.addEventListener('click', () => {
+                searchBreweryApi(zipcode);
+                fetchLocationAndDisplayBreweries(zipcode);
+            });
+   
+            savedZipcodeList.appendChild(button);
+        });
+    }
+ 
+     displaySavedSearches();
+
     function displayBreweries(breweries, userLatitude, userLongitude) {
         resultsContainer.innerHTML = '';
 
@@ -113,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
         breweries.forEach((brewery, index) => {
             // Calculating distance between user location and brewery location
             const distance = calculateDistance(userLatitude, userLongitude, brewery.latitude, brewery.longitude);
-
+            
             // Check if the brewery is within the specified distance
             if (distance <= distanceInput) {
                 const breweryDiv = document.createElement('div');
@@ -131,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else {
                     breweryDiv.innerHTML += `<p>Phone Number: Not Available</p>`;
                 }
-
+             
                 resultsContainer.appendChild(breweryDiv);
 
                 // Add marker for the brewery on the map

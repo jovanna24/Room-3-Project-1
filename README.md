@@ -1,37 +1,22 @@
 # Room-3-Project-1
-Project Title: Git Connected with Nonprofits in your Community!
-Description: A user-friendly application to locate nearby volunteer organizations
-User Story: As a community member, I want to get connected with local nonprofit organizations so that I can contribute to projects and purposes that I’m passionate about.  
+Project Title: Git Breweries!
+Description: A user-friendly application to locate nearby breweries using third-party APIs.
+User Story: As a community member, I want to find local breweries to support so that I can try new places & contribute to local brewery businesses.  
 
-USER FLOW/CHECKLIST TO COMPLETION
-
-WE ARE DONE WHEN
+ACCEPTANCE CRITERIA 
 - The site has title, description, attractive UI styling
-- When user clicks on <open form> a modal dialog appears
-- The user selects a category that has a value matching the query search parameter value for PROPUBLICA API
-- The user inputs a location that is used with a map API to retrieve a location display result
-- When submit search button is clicked, thisSearch is saved to fill fetchAPI functions, modal is closed
-- The page reloads to display a list of 10 search results per page next to a map-container
-- Each result has a <checkbox>
-- When checked, the result will be saved in localStorage as userInterests object
+- When user clicks on button & a modal dialog appears
+- The user inputs a 5 digit zipcode & desired distance (in miles)
+- When submit search button is clicked, inputs are used with a map API to retrieve a location display result 
+- & Brewery API to display a list of breweries located within distance radius of zipcode 
 - Data stored in local storage persists
-- The location of a selected result can be viewed using a <find org> button
-- Each result has a working url that links to the org site
+- Each result has contact information, address, & a working url that links to the org site
 - Footer contains authorship information
 - We demo the application with multiple locations and retrieve results consistently
 - We deploy the application per assignment guidelines using GitHub Pages
 
-STILL TO DO
-- Used saved thisSearch to retrieve specific API results
-- Display map container
-- Display results list with checkbox for each
-- Links for results are functional
-- Test to avoid error messages
-- Test to make sure data persists
-- Footer/final styling adjustments
-
 APIs USED
-1: 
-2: 
+1: https://api.openbrewerydb.org/breweries
+2: https://api.radar.io/v1/geocode/forward
 
 SCREENSHOT & LINK TO DEPLOYED APPLICATION
