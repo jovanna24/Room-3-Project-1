@@ -1,140 +1,68 @@
-// This code listens for the entire content of the web page to load before running.
 document.addEventListener('DOMContentLoaded', function () {
-    // Grabbing elements from the HTML document by their ID or class
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
     const closeModalButton = document.querySelector('.modal-close');
-    const userInterestsForm = document.getElementById('userInterestsForm');
+    const form = document.getElementById('brewery-search-form');
     const resultsContainer = document.getElementById('search-brewery-info');
-    let myMap; // Variable to store the map object
+    let myMap;
 
-    displaySavedSearches();
-
-
-    function displaySavedSearches () {
-        const results = readResultsFromStorage(); 
-        const savedZipcodeList = document.querySelector('#zip-results'); 
-    
-        savedZipcodeList.innerHTML = ''; 
-    
-        results.forEach(zipcode => {
-            const button = document.createElement('button'); 
-            button.classList.add('btn', 'active'); 
-            button.textContent= zipcode;
-    
-            button.addEventListener('click', ()=>{
-                searchBreweryApi(zipcode); 
-                
-            }); 
-    
-            savedZipcodeList.appendChild(button);
-        });
-    }
-
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 3958.8;
-        const lat1Rad = lat1 * Math.PI / 180; 
-        const lon1Rad = lon1 * Math.PI / 180; 
-        const lat2Rad = lat2 * Math.PI / 180; 
-        const lon2Rad = lon2 * Math.PI / 180; 
-        const dLat = lat2Rad - lat1Rad;
-        const dLon = lon2Rad - lon1Rad;
-        const a = Math.pow(Math.sin(dLat / 2), 2) + 
-                  Math.pow(Math.sin(dLon / 2), 2) * 
-                  Math.cos(lat1Rad) * 
-                  Math.cos(lat2Rad);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c;
-        return distance;
-    }
-    // Function to initialize and display the map
-    function initMap(lat, lng) {
-        // Check if a map already exists and remove it to prevent multiple maps from initializing
-        if (myMap) myMap.remove();
-
-        // Create a new map and set its view to the given latitude and longitude
-        myMap = L.map('map').setView([lat, lng], 13);
-        // Add OpenStreetMap tiles to the map
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data © OpenStreetMap contributors',
-            maxZoom: 18
-        }).addTo(myMap);
-    }
-
-    function removeMap() {
-        if (myMap) {
-            myMap.remove();
-            myMap = null;
-        }
-    }
-
-    // Event listener for opening the modal when the "Open Form" button is clicked
-    openModalButton.addEventListener('click', function() {
+    openModalButton.addEventListener('click', function () {
         modal.classList.add('is-active');
+        removeMap();
     });
 
-    // Event listener for closing the modal when the close button is clicked
-    closeModalButton.addEventListener('click', function() {
+    closeModalButton.addEventListener('click', function () {
         modal.classList.remove('is-active');
     });
 
-
-
-    // Event listener for form submission
-    userInterestsForm.addEventListener('submit', function(event) {
-        // Prevent the default form submission behavior
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        // Get values from the form inputs, trimming any extra whitespace
         const postalCode = document.getElementById('postalCodeInput').value.trim();
         const distance = document.getElementById('distanceInput').value.trim();
 
-        // Check if both fields have values before proceeding
         if (!postalCode || !distance) {
             alert('Please input both your zipcode and distance.');
             return;
         }
 
-        // Fetch location and display breweries if valid input is provided
         fetchLocationAndDisplayBreweries(postalCode, distance);
-        modal.classList.remove('is-active'); // Close the modal after submission
-
-        saveResultToStorage(postalCode);
+        modal.classList.remove('is-active');
     });
 
-    // Function to fetch location data and breweries based on user input
     function fetchLocationAndDisplayBreweries(zipcode, distance) {
         const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148'; 
-        // Fetching geographical data from Radar using the provided zipcode
         fetch(`https://api.radar.io/v1/geocode/forward?query=${zipcode}`, {
-            headers: { Authorization: apiKey }
-        })
-        .then(response => response.json())
-
-        .then(data => {
-            if (data.addresses && data.addresses.length > 0) {
-                const { latitude, longitude } = data.addresses[0];
-                initMap(latitude, longitude); // Initialize the map with these coordinates
-                searchBreweryApi(zipcode, distance, latitude, longitude); // Fetch breweries using these coordinates
-            } else {
-                alert('Failed to retrieve location data.');
+            headers: {
+                Authorization: apiKey
             }
         })
-        .catch(error => {
-            console.error('Error fetching location data:', error);
-            alert('Error fetching location data.');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.addresses && data.addresses.length > 0) {
+                    const {
+                        latitude,
+                        longitude
+                    } = data.addresses[0];
+                    initMap(latitude, longitude); 
+                    searchBreweryApi(zipcode, distance, latitude, longitude); 
+                } else {
+                    alert('Failed to retrieve location data.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location data:', error);
+                alert('Error fetching location data.');
+            });
     }
 
-    // Function to fetch brewery data from the Open Brewery DB API
     function searchBreweryApi(zipcode, distance, lat, lng) {
         const breweryURL = `https://api.openbrewerydb.org/breweries?by_dist=${lat},${lng}&per_page=10`;
 
         fetch(breweryURL)
             .then(response => response.json())
             .then(breweries => {
-                displayBreweries(breweries); // Display fetched breweries in the web page
-                console.log(breweries);
+                displayBreweries(breweries, lat, lng);
             })
             .catch(error => {
                 console.error('Error fetching breweries:', error);
@@ -142,9 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    // Function to display breweries in the HTML document
     function displayBreweries(breweries, userLatitude, userLongitude) {
-        resultsContainer.innerHTML = ''; // Clear any existing content
+        resultsContainer.innerHTML = '';
 
         if (breweries.length === 0) {
             resultsContainer.innerHTML = '<p>No breweries found in this area.</p>';
@@ -164,17 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 breweryDiv.innerHTML = `
                     <h3> ${brewery.name}</h3>
                     <p>${brewery.street || 'No address available'}, ${brewery.city}, ${brewery.state}</p>
-                    <p>Est. Distance: ${distance.toFixed(2)} miles</p>
+                    <p>Distance: ${distance.toFixed(2)} miles</p>
                     <a href="${brewery.website_url}" target="_blank" class="button is-link is-small">Visit Website</a>
                 `;
-                if (brewery.phone) {
-                    const cleanedPhoneNumber = brewery.phone.replace(/\D/g, '');
-                    const formattedPhoneNumber = `(${cleanedPhoneNumber.slice(0, 3)}) ${cleanedPhoneNumber.slice(3, 6)}-${cleanedPhoneNumber.slice(6)}`;
-                    breweryDiv.innerHTML += `<p>Phone Number: ${formattedPhoneNumber}</p>`;
-                } else {
-                    breweryDiv.innerHTML += `<p>Phone Number: Not Available</p>`;
-                }
-             
                 resultsContainer.appendChild(breweryDiv);
 
                 // Add marker for the brewery on the map
@@ -182,32 +101,43 @@ document.addEventListener('DOMContentLoaded', function () {
                 const breweryMarker = L.marker(breweryLatLng).addTo(myMap);
                 breweryMarker.bindPopup(`<b> ${brewery.name}</b><br>${brewery.city}, ${brewery.state}`).openPopup();
             }
-
-            console.log(brewery);
         });
-
     }
-    // Function to set up string in localStorage
-function saveResultToStorage(zipcode) {
-    let results = readResultsFromStorage(); 
 
-    if (results.indexOf(zipcode)=== -1) {
-        results.push(zipcode); 
-        localStorage.setItem('results', JSON.stringify(results)); 
-        console.log(zipcode + ' New postal code stored.'); 
-    } else {
-        console.log(zipcode + ' Postal code already exists.');
+    // Function to initialize the map
+    function initMap(lat, lng) {
+        if (myMap) myMap.remove(); 
+
+        myMap = L.map('map').setView([lat, lng], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © OpenStreetMap contributors',
+            maxZoom: 18
+        }).addTo(myMap);
     }
-}
 
-// Retrieve search string
-function readResultsFromStorage () {
-    let results = JSON.parse(localStorage.getItem('results')); 
-    if (!results) {
-        results = [];
+    // Function to remove the map
+    function removeMap() {
+        if (myMap) {
+            myMap.remove();
+            myMap = null;
+        }
     }
-    return results;
-}
 
+    // Function to calculate distance
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 3958.8;
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+        return distance;
+    }
 
+    // Function to convert degrees to radians
+    function toRadians(degrees) {
+        return degrees * Math.PI / 180;
+    }
 });
