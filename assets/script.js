@@ -91,7 +91,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(breweryURL)
             .then(response => response.json())
             .then(breweries => {
-                displayBreweries(breweries, lat, lng);
+                displayBreweries(breweries, lat, lng, distance);
+                saveResultToStorage(zipcode, distance); // Save the result to storage
+                displaySavedSearch(); // Update displayed search
             })
             .catch(error => {
                 console.error('Error fetching breweries:', error);
@@ -99,15 +101,43 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function displayBreweries(breweries, userLatitude, userLongitude) {
+    function saveResultToStorage(zipcode, distance) {
+        const result = { zipcode, distance };
+        localStorage.setItem('result', JSON.stringify(result));
+    }
+
+    function readResultFromStorage() {
+        const result = JSON.parse(localStorage.getItem('result'));
+        return result || null;
+    }
+
+    function displaySavedSearch() {
+        const result = readResultFromStorage();
+        const savedZipcodeList = document.querySelector('#zip-results');
+
+        savedZipcodeList.innerHTML = '';
+
+        if (result) {
+            const { zipcode, distance } = result;
+            const button = document.createElement('button');
+            button.classList.add('btn', 'active');
+            button.textContent = `Last search: ${zipcode}`;
+
+            button.addEventListener('click', () => {
+                fetchLocationAndDisplayBreweries(zipcode, distance); // Pass both zipcode and distance
+            });
+
+            savedZipcodeList.appendChild(button);
+        }
+    }
+
+    function displayBreweries(breweries, userLatitude, userLongitude, distanceInput) {
         resultsContainer.innerHTML = '';
 
         if (breweries.length === 0) {
             resultsContainer.innerHTML = '<p>No breweries found in this area.</p>';
             return;
         }
-
-        const distanceInput = parseFloat(document.getElementById('distanceInput').value.trim());
 
         breweries.forEach((brewery, index) => {
             // Calculating distance between user location and brewery location
@@ -140,4 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    displaySavedSearch(); // Call after defining event listeners
 });
