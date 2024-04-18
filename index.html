@@ -20,21 +20,21 @@
         </div>
     
     <!-- Button to open the modal -->
-    <button id="open-modal" class="button is-primary">Open Brewery Search Query</button>
+    <button id="open-modal" class="button is-primary">Open Form</button>
 
     <!-- Modal (PopUp) Form -->
     <div class="modal" id="modal">
         <div class="modal-background"></div>
         <div class="modal-content my-1">
-            <form id="brewery-search-form" class="box">
+            <form id="userInterestsForm" class="box">
                 <div class="field">
-                    <label class="label">Zip Code:</label>
+                    <label class="label" for="postalCodeInput" >Zip Code:</label>
                     <div class="control">
                         <input class="input" type="text" id="postalCodeInput" placeholder="Input your Zip Code!">
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Distance (miles):</label>
+                    <label for="distanceInput" class="label">Distance (miles):</label>
                     <div class="control">
                         <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1" max="100">
                     </div>
@@ -62,11 +62,17 @@
                 <!-- Brewery info will be displayed here -->
             </div>
         </div>
+
+        <div class="section">
+            <div class="container" id="zip-results">
+                <!-- saved searches will display here -->
+            </div>
+        </div>
     
     
 
     <!-- Scripts  -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="assets/js/script2.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

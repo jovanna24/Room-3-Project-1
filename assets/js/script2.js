@@ -6,6 +6,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const resultsContainer = document.getElementById('search-brewery-info');
     let myMap; // Map variable
 
+   // Function to calculate distance
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 3958.8;
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+        return distance;
+    }
+
+    // Function to convert degrees to radians
+    function toRadians(degrees) {
+        return degrees * Math.PI / 180;
+    }
+   
     // Initialize the map
     function initMap(lat, lng) {
         if (myMap) myMap.remove(); // Clear existing map instance if exists
@@ -15,6 +33,14 @@ document.addEventListener('DOMContentLoaded', function () {
             attribution: 'Map data © OpenStreetMap contributors',
             maxZoom: 18
         }).addTo(myMap);
+    }
+
+    // Function to remove the map
+    function removeMap() {
+        if (myMap) {
+            myMap.remove();
+            myMap = null;
+        }
     }
 
     openModalButton.addEventListener('click', function() {
@@ -67,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(breweryURL)
             .then(response => response.json())
             .then(breweries => {
-                displayBreweries(breweries);
+                displayBreweries(breweries, lat, lng);
             })
             .catch(error => {
                 console.error('Error fetching breweries:', error);
@@ -75,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 
-    function displayBreweries(breweries) {
+    function displayBreweries(breweries, userLatitude, userLongitude) {
         resultsContainer.innerHTML = ''; // Clear previous results
 
         if (breweries.length === 0) {
@@ -83,23 +109,30 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        breweries.forEach(brewery => {
-            // Creating HTML structure to display each brewery
-            const breweryDiv = document.createElement('div');
-            breweryDiv.classList.add('box'); // Using Bulma's box class for styling
-            breweryDiv.innerHTML = `
-                <h3>${brewery.name}</h3>
-                <p>${brewery.street || 'No address available'}, ${brewery.city}, ${brewery.state}</p>
-                <a href="${brewery.website_url}" target="_blank" class="button is-link is-small">Visit Website</a><br/>`;
-            if (brewery.phone) {
-                const cleanedPhoneNumber = brewery.phone.replace(/\D/g, '');
-                const formattedPhoneNumber = `(${cleanedPhoneNumber.slice(0, 3)}) ${cleanedPhoneNumber.slice(3, 6)}-${cleanedPhoneNumber.slice(6)}`;
-                breweryDiv.innerHTML += `<strong>Phone Number:</strong> ${formattedPhoneNumber}<br/>`;
-            } else {
-                breweryDiv.innerHTML += `<strong>Phone Number:</strong> Not Available<br/>`;
+        const distanceInput = parseFloat(document.getElementById('distanceInput').value.trim());
+
+
+        breweries.forEach((brewery, index) => {
+            // Calculating distance between user location and brewery location
+            const distance = calculateDistance(userLatitude, userLongitude, brewery.latitude, brewery.longitude);
+            
+            // Check if the brewery is within the specified distance
+            if (distance <= distanceInput) {
+                const breweryDiv = document.createElement('div');
+                breweryDiv.classList.add('box');
+                breweryDiv.innerHTML = `
+                    <h3> ${brewery.name}</h3>
+                    <p>${brewery.street || 'No address available'}, ${brewery.city}, ${brewery.state}</p>
+                    <p>Distance: ${distance.toFixed(2)} miles</p>
+                    <a href="${brewery.website_url}" target="_blank" class="button is-link is-small">Visit Website</a>
+                `;
+                resultsContainer.appendChild(breweryDiv);
+
+                // Add marker for the brewery on the map
+                const breweryLatLng = L.latLng(brewery.latitude, brewery.longitude);
+                const breweryMarker = L.marker(breweryLatLng).addTo(myMap);
+                breweryMarker.bindPopup(`<b> ${brewery.name}</b><br>${brewery.city}, ${brewery.state}`).openPopup();
             }
-         
-            resultsContainer.appendChild(breweryDiv);
         });
     }
 });
