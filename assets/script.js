@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
     const closeModalButton = document.querySelector('.modal-close');
@@ -140,4 +140,51 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
+
+    function displaySavedSearches () {
+        const results = readResultsFromStorage(); 
+        const savedZipcodeList = document.querySelector('#zip-results'); 
+    
+        savedZipcodeList.innerHTML = ''; 
+    
+        results.forEach(zipcode => {
+            const button = document.createElement('button'); 
+            button.classList.add('btn', 'active'); 
+            button.textContent= zipcode;
+    
+            button.addEventListener('click', ()=>{
+                searchBreweryApi(zipcode); 
+                
+            }); 
+    
+            savedZipcodeList.appendChild(button);
+        });
+    }
+
+    // Function to set up string in localStorage
+function saveResultToStorage(zipcode) {
+    let results = readResultsFromStorage(); 
+
+    if (results.indexOf(zipcode)=== -1) {
+        results.push(zipcode); 
+        localStorage.setItem('results', JSON.stringify(results)); 
+        console.log(zipcode + ' New postal code stored.'); 
+    } else {
+        console.log(zipcode + ' Postal code already exists.');
+    }
+}
+
+// Retrieve search string
+function readResultsFromStorage () {
+    let results = JSON.parse(localStorage.getItem('results')); 
+    if (!results) {
+        results = [];
+    }
+    return results;
+}
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // openModalButton.addEventListener('click', openModal);
+        // closeModalButton.addEventListener('click', closeModal);
+        displaySavedSearches();
+    });
