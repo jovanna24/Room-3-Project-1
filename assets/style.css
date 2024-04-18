@@ -1,3 +1,9 @@
 strong{
     font-size: 50px;
 }
+
+.btn{
+    display: block;
+    margin: 5px;
+    font-size: large;
+}

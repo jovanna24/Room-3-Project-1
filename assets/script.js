@@ -62,6 +62,7 @@
 
         fetchLocationAndDisplayBreweries(postalCode, distance);
         modal.classList.remove('is-active');
+        saveResultToStorage(postalCode);
     });
 
     function fetchLocationAndDisplayBreweries(zipcode, distance) {
@@ -149,13 +150,12 @@
     
         results.forEach(zipcode => {
             const button = document.createElement('button'); 
-            button.classList.add('btn', 'active'); 
-            button.textContent= zipcode;
+            button.classList.add('btn', 'active','btn-spacing'); 
+            button.textContent= `Prior Search: ${zipcode}`;
     
-            button.addEventListener('click', ()=>{
-                searchBreweryApi(zipcode); 
-                
-            }); 
+            button.addEventListener('click', () => {
+                fetchLocationAndDisplayBreweries(zipcode, distanceInput.value.trim());
+            });
     
             savedZipcodeList.appendChild(button);
         });
@@ -177,6 +177,7 @@ function saveResultToStorage(zipcode) {
 // Retrieve search string
 function readResultsFromStorage () {
     let results = JSON.parse(localStorage.getItem('results')); 
+
     if (!results) {
         results = [];
     }
