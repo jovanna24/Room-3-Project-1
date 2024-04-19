@@ -1,30 +1,31 @@
-
+// Combined code
+document.addEventListener('DOMContentLoaded', function () {
     const modal = document.getElementById('modal');
     const openModalButton = document.getElementById('open-modal');
-    const closeModalButton = document.querySelector('.modal-close');
-    const userInterestsForm = document.getElementById('userInterestsForm'); // Updated ID
+    const closeModalButton = document.getElementById('modal-close');
+    const modalForm = document.getElementById('locationInput');
     const resultsContainer = document.getElementById('search-brewery-info');
     let myMap;
-
+    // Function to calculate distance radius
     function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 3958.8;
-        const lat1Rad = lat1 * Math.PI / 180; 
-        const lon1Rad = lon1 * Math.PI / 180; 
-        const lat2Rad = lat2 * Math.PI / 180; 
-        const lon2Rad = lon2 * Math.PI / 180; 
+        const lat1Rad = lat1 * Math.PI / 180;
+        const lon1Rad = lon1 * Math.PI / 180;
+        const lat2Rad = lat2 * Math.PI / 180;
+        const lon2Rad = lon2 * Math.PI / 180;
         const dLat = lat2Rad - lat1Rad;
         const dLon = lon2Rad - lon1Rad;
-        const a = Math.pow(Math.sin(dLat / 2), 2) + 
-                  Math.pow(Math.sin(dLon / 2), 2) * 
-                  Math.cos(lat1Rad) * 
-                  Math.cos(lat2Rad);
+        const a = Math.pow(Math.sin(dLat / 2), 2) +
+            Math.pow(Math.sin(dLon / 2), 2) *
+            Math.cos(lat1Rad) *
+            Math.cos(lat2Rad);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         const distance = R * c;
         return distance;
     }
-
+    // Function to initialize and display/remove map
     function initMap(lat, lng) {
-        if (myMap) myMap.remove(); 
+        if (myMap) myMap.remove();
 
         myMap = L.map('map').setView([lat, lng], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -39,7 +40,7 @@
             myMap = null;
         }
     }
-
+    // Functions to open/close modal
     openModalButton.addEventListener('click', function () {
         modal.classList.add('is-active');
         removeMap();
@@ -49,9 +50,9 @@
         modal.classList.remove('is-active');
     });
 
-    userInterestsForm.addEventListener('submit', function (event) { // Updated ID
+    modalForm.addEventListener('submit', function (event) {
         event.preventDefault();
-
+        // trim any excess whitespace
         const postalCode = document.getElementById('postalCodeInput').value.trim();
         const distance = document.getElementById('distanceInput').value.trim();
 
@@ -62,28 +63,27 @@
 
         fetchLocationAndDisplayBreweries(postalCode, distance);
         modal.classList.remove('is-active');
-        saveResultToStorage(postalCode);
     });
 
     function fetchLocationAndDisplayBreweries(zipcode, distance) {
-        const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148'; 
+        const apiKey = 'prj_test_pk_46aed3ba8dcbae2e29b726476e62a678b9f18148';
         fetch(`https://api.radar.io/v1/geocode/forward?query=${zipcode}`, {
             headers: { Authorization: apiKey }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.addresses && data.addresses.length > 0) {
-                const { latitude, longitude } = data.addresses[0];
-                initMap(latitude, longitude); 
-                searchBreweryApi(zipcode, distance, latitude, longitude); 
-            } else {
-                alert('Failed to retrieve location data.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching location data:', error);
-            alert('Error fetching location data.');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.addresses && data.addresses.length > 0) {
+                    const { latitude, longitude } = data.addresses[0];
+                    initMap(latitude, longitude);
+                    searchBreweryApi(zipcode, distance, latitude, longitude);
+                } else {
+                    alert('Failed to retrieve location data.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching location data:', error);
+                alert('Error fetching location data.');
+            });
     }
 
     function searchBreweryApi(zipcode, distance, lat, lng) {
@@ -98,7 +98,51 @@
                 console.error('Error fetching breweries:', error);
                 alert('Error fetching breweries data.');
             });
+        saveResultToStorage(zipcode);
     }
+
+    function saveResultToStorage(zipcode) {
+        let results = readResultsFromStorage();
+
+        if (results.indexOf(zipcode) === -1) {
+            results.push(zipcode);
+            localStorage.setItem('results', JSON.stringify(results));
+            console.log(zipcode + ' New postal code stored.');
+        } else {
+            console.log(zipcode + ' Postal code already exists.');
+        }
+    }
+
+    // Retrieve search string
+    function readResultsFromStorage() {
+        let results = JSON.parse(localStorage.getItem('results'));
+        if (!results) {
+            results = [];
+        }
+        return results;
+    }
+
+    function displaySavedSearches() {
+        const results = readResultsFromStorage();
+        const savedZipcodeList = document.getElementById('zip-results');
+
+        savedZipcodeList.innerHTML = '';
+
+        results.forEach(zipcode => {
+            const button = document.createElement('button');
+            button.classList.add('btn', 'active');
+            button.textContent = `Previous searches: ${zipcode}`;
+
+            button.addEventListener('click', () => {
+                searchBreweryApi(zipcode);
+                fetchLocationAndDisplayBreweries(zipcode);
+            });
+
+            savedZipcodeList.appendChild(button);
+        });
+    }
+
+    displaySavedSearches();
 
     function displayBreweries(breweries, userLatitude, userLongitude) {
         resultsContainer.innerHTML = '';
@@ -113,7 +157,7 @@
         breweries.forEach((brewery, index) => {
             // Calculating distance between user location and brewery location
             const distance = calculateDistance(userLatitude, userLongitude, brewery.latitude, brewery.longitude);
-            
+
             // Check if the brewery is within the specified distance
             if (distance <= distanceInput) {
                 const breweryDiv = document.createElement('div');
@@ -131,7 +175,7 @@
                 } else {
                     breweryDiv.innerHTML += `<p>Phone Number: Not Available</p>`;
                 }
-             
+
                 resultsContainer.appendChild(breweryDiv);
 
                 // Add marker for the brewery on the map
@@ -141,51 +185,4 @@
             }
         });
     }
-
-    function displaySavedSearches () {
-        const results = readResultsFromStorage(); 
-        const savedZipcodeList = document.querySelector('#zip-results'); 
-    
-        savedZipcodeList.innerHTML = ''; 
-    
-        results.forEach(zipcode => {
-            const button = document.createElement('button'); 
-            button.classList.add('btn', 'active','btn-spacing'); 
-            button.textContent= `Prior Search: ${zipcode}`;
-    
-            button.addEventListener('click', () => {
-                fetchLocationAndDisplayBreweries(zipcode, distanceInput.value.trim());
-            });
-    
-            savedZipcodeList.appendChild(button);
-        });
-    }
-
-    // Function to set up string in localStorage
-function saveResultToStorage(zipcode) {
-    let results = readResultsFromStorage(); 
-
-    if (results.indexOf(zipcode)=== -1) {
-        results.push(zipcode); 
-        localStorage.setItem('results', JSON.stringify(results)); 
-        console.log(zipcode + ' New postal code stored.'); 
-    } else {
-        console.log(zipcode + ' Postal code already exists.');
-    }
-}
-
-// Retrieve search string
-function readResultsFromStorage () {
-    let results = JSON.parse(localStorage.getItem('results')); 
-
-    if (!results) {
-        results = [];
-    }
-    return results;
-}
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // openModalButton.addEventListener('click', openModal);
-        // closeModalButton.addEventListener('click', closeModal);
-        displaySavedSearches();
-    });
+});
