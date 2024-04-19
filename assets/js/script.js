@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error fetching breweries:', error);
                 alert('Error fetching breweries data.');
             });
+            
     }
 
     function saveResultToStorage(zipcode) {
