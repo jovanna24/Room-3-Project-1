@@ -3,3 +3,9 @@
 .cell div {
   align-self: center;
 }
+
+.btn {
+  margin: 5px;
+  padding: 3px;
+  display: block;
+}
