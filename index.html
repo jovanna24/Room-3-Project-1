@@ -1,51 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git Brewed! 🍻</title>
+    <title>Git Breweries!</title>
     <!-- Bulma CSS for styling -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
     <!-- Leaflet CSS for the map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <!-- Our custom Stylesheet -->
-    <link rel="stylesheet" href="assets/style.css">   
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
 
     <!-- Instructions banner -->
-    <div class="notification is-primary">
-        <strong>Git Brewed! 🍻</strong> <br> Discover local breweries near you! Enter your ZIP code to get started.
+    <div class="fixed-grid has-4-cols">
+        <div class="grid">
+            <div class="cell is-col-span-3 has-text-weight-semibold is-size-2 has-text-primary my-5 ml-5">
+                Git
+                Breweries!</div>
+            <div class="cell has-text-centered m-3">
+                <!-- Button to open the modal -->
+                <button id="open-modal" class="button is-large is-primary is-outlined m-3" data-target="userInput">Find
+                    🍻</button>
+            </div>
+            <div class="cell is-col-span-4 ml-5">Discover local breweries near you! <strong> Click on </strong>the
+                <code>Find 🍺</code> button to get started!
+            </div>
+        </div>
     </div>
-    
-    <!-- Button to open the modal -->
-    <button id="open-modal" class="button is-primary">Open Brewery Search Query</button>
 
     <!-- Modal (PopUp) Form -->
     <div class="modal" id="modal">
         <div class="modal-background"></div>
         <div class="modal-content my-1">
-            <form id="userInterestsForm" class="box">
+            <form id="locationInput" class="box">
                 <div class="field">
-                    <label class="label" for="postalCodeInput">Zip Code:</label>
+                    <label class="label">Zip Code:</label>
                     <div class="control">
                         <input class="input" type="text" id="postalCodeInput" placeholder="Input your Zip Code!">
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label" for="distanceInput">Distance (miles):</label>
+                    <label class="label">Distance (miles):</label>
                     <div class="control">
-                        <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1" max="100">
+                        <input class="input" type="number" id="distanceInput" placeholder="Distance in miles" min="1"
+                            max="100">
                     </div>
                 </div>
                 <div class="field">
                     <div class="control">
-                        <button class="button is-link" type="submit">Submit Search</button>
+                        <button class="button is-link is-outlined" type="submit">Submit Search</button>
                     </div>
                 </div>
             </form>
-            <button class="modal-close is-large" aria-label="close"></button>
+            <button class="modal-close is-large" id="modal-close" aria-label="close"></button>
         </div>
     </div>
 
@@ -55,7 +66,7 @@
             <div id="map" style="height: 400px;"></div>
         </div>
     </div>
-    
+
     <!-- Brewery information area -->
     <div class="section">
         <div class="container" id="search-brewery-info">
@@ -63,18 +74,17 @@
         </div>
     </div>
 
-    <!-- Stored Brewery information area -->
+    <!-- Search History -->
     <div class="section">
         <div class="container" id="zip-results">
-            <!-- Brewery info will be displayed here -->
+            <!-- saved searches will display here -->
         </div>
     </div>
 
     <!-- Scripts  -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="assets/script.js"></script>
+    <script src="assets/js/script.js"></script>
 
 </body>
 
 </html>
-
